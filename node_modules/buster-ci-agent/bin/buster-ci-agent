@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+process.on("uncaughtException", function (err) {
+    console.log(err.stack);
+});
+
+var path = require("path");
+
+var Agent = require("buster-ci-agent");
+
+function loadConfig(fileName) {
+    var mod = path.resolve("", fileName);
+    try {
+        return require(mod);
+    } catch (e) {
+        if (e.message !== "Cannot find module '" + mod + "'") {
+            throw e;
+        }
+    }
+}
+
+var config = loadConfig("buster-ci-agent.js");
+
+if (config) {
+	var agent = new Agent(config);
+	agent.listen();
+} else {
+	console.log("Configuration file 'buster-ci-agent.js' not found!");
+}
+
+
